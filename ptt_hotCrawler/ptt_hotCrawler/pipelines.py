@@ -6,6 +6,7 @@
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 
 
-class PttHotcrawlerPipeline:
-    def process_item(self, item, spider):
+class PttHotcrawlerPipeline(object):
+    def Process_item(self,item,spider):
+        item['TotalPush'] = int(item['TotalPush'])
         return item

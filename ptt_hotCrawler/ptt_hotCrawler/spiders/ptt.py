@@ -10,15 +10,22 @@ class PttSpider(scrapy.Spider):
     allowed_domains = ['www.ptt.cc/']
     start_urls = ['https://www.ptt.cc/bbs/hotboards.html']
     def parse(self, response):
+        items = PttHotcrawlerItem()
         for q in response.css('div.b-ent'):
-            item = {
-                'boardlink': 'https://www.ptt.cc/' +q.css('a.board::attr(href)').extract_first(),
-                'boardname': q.css('div.board-name::text').extract_first(),
-                'boardClass':q.css('div.board-class::text').extract_first(),
-                'boardtitle':q.css('div.board-title::text').extract_first(),
-                'TotalPush': q.css('div.board-nuser > span.hl::text').extract_first(),
-            }
-            yield(item)
+            
+            items['boardlink']  = 'https://www.ptt.cc/' +q.css('a.board::attr(href)').extract_first()
+            items['boardname']  = q.css('div.board-name::text').extract_first()
+            items['boardClass'] = q.css('div.board-class::text').extract_first()
+            items['boardtitle'] = q.css('div.board-title::text').extract_first()
+            items['TotalPush']  = q.css('div.board-nuser > span.hl::text').extract_first()
+            # item = {
+            #     'boardlink': 'https://www.ptt.cc/' +q.css('a.board::attr(href)').extract_first(),
+            #     'boardname': q.css('div.board-name::text').extract_first(),
+            #     'boardClass':q.css('div.board-class::text').extract_first(),
+            #     'boardtitle':q.css('div.board-title::text').extract_first(),
+            #     'TotalPush': q.css('div.board-nuser > span.hl::text').extract_first(),
+            # }
+            yield(items)
         next_page_url = response.css('div.action-bar > div.btn-group > a.btn::attr(href)')[3].extract()
         if (next_page_url) and (self.count_page < 10):
             self.count_page = self.count_page + 1 
